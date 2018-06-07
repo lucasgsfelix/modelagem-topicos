@@ -1,13 +1,18 @@
 # coding: utf-8
 # user/bin/python
+import sys
+
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
+
 import nltk
 from nltk.corpus import stopwords
-import nltk 
 from nltk.stem import RSLPStemmer
 import string
 import gensim
 from gensim import corpora
 import re
+import unicodedata
 
 ##### esse código será responsável por fazer a modelagem de tópicos no nosso trabalho
 
@@ -84,10 +89,11 @@ def removeNumbers(info):
 
 def stemming(sentence):
 
-
 	stemmer = RSLPStemmer()
 	phrase = []
 	for word in sentence:
+		word = unicode(word, 'utf-8')
+		word = unicodedata.normalize("NFKD", word)
 		phrase.append(stemmer.stem(word.lower()))
 
 	return phrase
@@ -112,14 +118,9 @@ if __name__ == '__main__':
 	info = removeWords(stop, info) ### retirando stop words
 	info = removeNumbers(info)
 
-	print info[0]
-	try:
-		for i in range(0, len(info)):
-			info[i] =  stemming(info[i])
-	except:
-		print "erro"
 
-	print info[0]
+	for i in range(0, len(info)):
+		info[i] =  stemming(info[i])
 
 
 
