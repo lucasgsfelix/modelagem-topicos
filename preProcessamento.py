@@ -103,11 +103,19 @@ def saida(info):
 
 	arq_saida = open("baseReclamacoes", "w")
 	aux = 0
+	aux2 = 0
 	for i in info:
+		aux2 = 0
 		for j in i:
-			arq_saida.write(u''.join(j).encode('utf-8')+' ')
+
+			if aux2<len(info[aux])-1:arq_saida.write(u''.join(j).encode('utf-8')+' ')
+			else:arq_saida.write(u''.join(j).encode('utf-8'))
+
+			aux2 = aux2+1		
+		
 		if aux<len(info)-1:arq_saida.write('\n')
 		aux=aux+1
+		
 	arq_saida.close()
 
 if __name__ == '__main__':
