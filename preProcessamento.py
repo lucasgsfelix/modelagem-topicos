@@ -1,10 +1,5 @@
 # coding: utf-8
 # user/bin/python
-import sys
-
-#reload(sys)
-#sys.setdefaultencoding("utf-8")
-
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import RSLPStemmer
@@ -29,6 +24,11 @@ def leitura(arquivo, posicao):
 		info[i] = info[i].split('\t')
 		data.append(info[i][posicao]) ### posicao é 7 para base do reclame aqui
 									### tem que olhar qual posição na base do twitter
+
+	finalData = []
+	for i in range(0, len(data)):
+		for j in range(0, len(data[i])):
+			finalData.append(data[i][j].lower())
 
 	return data
 
@@ -107,7 +107,8 @@ def saida(info):
 	for i in info:
 		aux2 = 0
 		for j in i:
-
+			j = unicode(j, 'utf-8')
+			j = unicodedata.normalize("NFKD", j)
 			if aux2<len(info[aux])-1:arq_saida.write(u''.join(j).encode('utf-8')+' ')
 			else:arq_saida.write(u''.join(j).encode('utf-8'))
 
@@ -124,7 +125,7 @@ if __name__ == '__main__':
 	stop = set(stopwords.words('portuguese'))
 	exclude = set(string.punctuation) 
 
-	pontuacao = ['<br', '.', ',', '?', '!', '(', ')', ':', '-', '...', '<', '>']
+	pontuacao = ['<br', '.', ',', '?', '!', '(', ')', ':', '-', '...', '<', '>', 'RT']
 	for i in range(0, len(info)):
 		for j in pontuacao:
 
@@ -139,8 +140,8 @@ if __name__ == '__main__':
 	info = removeNumbers(info)
 
 
-	for i in range(0, len(info)):
-		info[i] =  stemming(info[i])
+	#for i in range(0, len(info)):
+	#	info[i] =  stemming(info[i])
 
 
 	saida(info)
