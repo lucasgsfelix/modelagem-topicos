@@ -14,7 +14,6 @@ def leitura(arquivo, posicao):
 
 	arq = open(arquivo, "r")
 	info = arq.read()
-	info = unicode(info, 'utf-8')
 	arq.close()
 	info = info.split('\n')
 	data = []
@@ -69,30 +68,59 @@ def readWords(file_name):
 
 	return info
 
+def removeNumbers(info):
+	i=0
+	while(i<len(info)):
+		j=0
+		while(j<len(info[i])):
+			if (re.match(r'^[0-9]+$', info[i][j])):
+				info[i].pop(j)
+				j=j-1
+			j=j+1
+		i=i+1
+
+	return info
+
+
 if __name__ == '__main__':
 	
 	info = leitura("reclameAqui.txt", 6)
 	stop = set(stopwords.words('portuguese'))
 	exclude = set(string.punctuation) 
 
+	pontuacao = ['<br', '.', ',', '?', '!', '(', ')', ':', '-', '...']
 	for i in range(0, len(info)):
 		### o que eu preciso retirar <br
-		info[i] = info[i].replace('<br', ' ')
+		for j in pontuacao:
+
+			info[i] = info[i].replace(j, ' ')
 
 	info = [preProcessamento(data).split() for data in info] ## ao final tenho tudo pre processado
 	adjectives = readWords('lista_adjetivos')
 	stop = readWords('stop_words')
+
 	info = removeWords(adjectives, info) ### retirando adjetivos
 	info = removeWords(stop, info) ### retirando stop words
+	info = removeNumbers(info)
+
 
 
 	#### parte de modelagem de tópicos
 	dictionary = corpora.Dictionary(info)
 	doc_term_matrix = [dictionary.doc2bow(doc) for doc in info]
-	Lda = gensim.models.ldamodel.LdaModel
-	ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
+	#Lda = gensim.models.ldamodel.LdaModel
+	#ldamodel = Lda(doc_term_matrix, num_topics=10, id2word = dictionary, passes=50)
+	ldamodel = gensim.models.ldamodel.LdaModel(corpus=doc_term_matrix,
+                                           id2word=dictionary,
+                                           num_topics=len(info), 
+                                           random_state=100,
+                                           update_every=1,
+                                           chunksize=100,
+                                           passes=10,
+                                           alpha='auto',
+                                           per_word_topics=True)
 
-	print(ldamodel.print_topics(num_topics=10, num_words=3))
+	print ldamodel.print_topics(num_topics=10, num_words=4)
 		
 
 
