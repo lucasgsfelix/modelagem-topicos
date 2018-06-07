@@ -19,9 +19,19 @@ def leitura(arquivo, posicao):
 
 	return data
 
+def returnTopics(topicos):
+
+	t = []
+	for i in range(0, len(topicos)):
+		topicos[i] = str(topicos[i]).split('"')
+		for j in range(0, len(topicos[i])):
+			if j % 2 != 0:
+				t.append(topicos[i][j])
+	return t
 
 if __name__ == '__main__':
 	#### parte de modelagem de tópicos
+	info = leitura('base', 7)
 	dictionary = corpora.Dictionary(info)
 	doc_term_matrix = [dictionary.doc2bow(doc) for doc in info]
 	#Lda = gensim.models.ldamodel.LdaModel
@@ -37,10 +47,4 @@ if __name__ == '__main__':
                                            per_word_topics=True)
 
 	topicos = ldamodel.print_topics(num_topics=10, num_words=4)
-	t = []
-	for i in range(0, len(topicos)):
-		topicos[i] = str(topicos[i]).split('"')
-		for j in range(0, len(topicos[i])):
-			if j % 2 != 0:
-				t.append(topicos[i][j])
-	print t
+	t = returnTopics(topicos)
