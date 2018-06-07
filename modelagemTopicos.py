@@ -2,26 +2,27 @@
 # user/bin/python
 import gensim
 from gensim import corpora
+import unicodedata
 
-def leitura(arquivo, posicao):
+def leitura(arquivo):
 
 	arq = open(arquivo, "r")
 	info = arq.read()
 	arq.close()
 	info = info.split('\n')
-	data = []
+	for i in range(0, len(info)):
+		info[i]=info[i].split(' ')
 
 	for i in range(0, len(info)):
+		for j in range(0, len(info[i])):
+			info[i][j] = info[i][j].decode('unicode_escape').encode('ascii','ignore')
 
-		info[i] = info[i].split('\t')
-		data.append(info[i][posicao]) ### posicao é 7 para base do reclame aqui
-									### tem que olhar qual posição na base do twitter
-
-	return data
+	return info
 
 def returnTopics(topicos):
 
 	t = []
+	
 	for i in range(0, len(topicos)):
 		topicos[i] = str(topicos[i]).split('"')
 		for j in range(0, len(topicos[i])):
@@ -31,7 +32,9 @@ def returnTopics(topicos):
 
 if __name__ == '__main__':
 	#### parte de modelagem de tópicos
-	info = leitura('base', 7)
+	info = leitura('baseReclamacoes')
+	
+
 	dictionary = corpora.Dictionary(info)
 	doc_term_matrix = [dictionary.doc2bow(doc) for doc in info]
 	#Lda = gensim.models.ldamodel.LdaModel
@@ -47,4 +50,6 @@ if __name__ == '__main__':
                                            per_word_topics=True)
 
 	topicos = ldamodel.print_topics(num_topics=10, num_words=4)
+	print topicos
 	t = returnTopics(topicos)
+	
