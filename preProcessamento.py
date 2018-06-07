@@ -1,11 +1,14 @@
 # coding: utf-8
 # user/bin/python
 import nltk
-from nltk.corpus import stopwords 
+from nltk.corpus import stopwords
+import nltk 
+from nltk.stem import RSLPStemmer
 import string
 import gensim
 from gensim import corpora
 import re
+
 ##### esse código será responsável por fazer a modelagem de tópicos no nosso trabalho
 
 def leitura(arquivo, posicao):
@@ -79,6 +82,15 @@ def removeNumbers(info):
 
 	return info
 
+def stemming(sentence):
+
+
+	stemmer = RSLPStemmer()
+	phrase = []
+	for word in sentence:
+		phrase.append(stemmer.stem(word.lower()))
+
+	return phrase
 
 if __name__ == '__main__':
 	
@@ -99,4 +111,15 @@ if __name__ == '__main__':
 	info = removeWords(adjectives, info) ### retirando adjetivos
 	info = removeWords(stop, info) ### retirando stop words
 	info = removeNumbers(info)
+
+	print info[0]
+	try:
+		for i in range(0, len(info)):
+			info[i] =  stemming(info[i])
+	except:
+		print "erro"
+
+	print info[0]
+
+
 
