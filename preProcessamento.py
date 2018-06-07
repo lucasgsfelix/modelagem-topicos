@@ -87,6 +87,7 @@ def removeNumbers(info):
 
 	return info
 
+
 def stemming(sentence):
 
 	stemmer = RSLPStemmer()
@@ -97,6 +98,17 @@ def stemming(sentence):
 		phrase.append(stemmer.stem(word.lower()))
 
 	return phrase
+
+def saida(info):
+
+	arq_saida = open("baseReclamacoes", "w")
+	aux = 0
+	for i in info:
+		for j in i:
+			arq_saida.write(u''.join(j).encode('utf-8')+' ')
+		if aux<len(info)-1:arq_saida.write('\n')
+		aux=aux+1
+	arq_saida.close()
 
 if __name__ == '__main__':
 	
@@ -123,4 +135,5 @@ if __name__ == '__main__':
 		info[i] =  stemming(info[i])
 
 
+	saida(info)
 
