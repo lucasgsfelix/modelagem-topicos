@@ -1,7 +1,9 @@
 # coding: utf-8
-# user/bin/python
+#!/usr/bin/env python
 import gensim
-from gensim import corpora
+import gensim.corpora as corpora
+from gensim.utils import simple_preprocess
+from gensim.models import CoherenceModel
 import unicodedata
 
 def leitura(arquivo):
@@ -30,15 +32,26 @@ def returnTopics(topicos):
 				t.append(topicos[i][j])
 	return t
 
+def make_bigrams(texts):
+    return [bigram_mod[doc] for doc in texts]
+
+def make_trigrams(texts):
+    return [trigram_mod[bigram_mod[doc]] for doc in texts]
+
 if __name__ == '__main__':
 	#### parte de modelagem de tópicos
 	info = leitura('baseReclamacoes')
-	
+	### bigramas e trigramas são conjuntos de duas e três palavras que co-ocorrem com muita frequência
+	bigram = gensim.models.Phrases(info, min_count=5, threshold=100) # quanto maior o threshold menor o tamanho das frases
+	trigram = gensim.models.Phrases(bigram[info], threshold=100)  
+
+	bigram_mod = gensim.models.phrases.Phraser(bigram)
+	trigram_mod = gensim.models.phrases.Phraser(trigram)
+
 
 	dictionary = corpora.Dictionary(info)
 	doc_term_matrix = [dictionary.doc2bow(doc) for doc in info]
-	#Lda = gensim.models.ldamodel.LdaModel
-	#ldamodel = Lda(doc_term_matrix, num_topics=10, id2word = dictionary, passes=50)
+
 	ldamodel = gensim.models.ldamodel.LdaModel(corpus=doc_term_matrix,
                                            id2word=dictionary,
                                            num_topics=len(info), 
@@ -50,6 +63,11 @@ if __name__ == '__main__':
                                            per_word_topics=True)
 
 	topicos = ldamodel.print_topics(num_topics=10, num_words=4)
-	print topicos
-	t = returnTopics(topicos)
-	
+	#t = returnTopics(topicos)
+	#doc_lda = ldamodel[doc_term_matrix]
+	# Perplexity é uma medida de quão bom o modelo é, quanto menor melhor
+	#print 'Perplexity: ', ldamodel.log_perplexity(doc_term_matrix)  
+	#coherence_model_lda = CoherenceModel(model=ldamodel, texts=info, dictionary=dictionary, coherence='c_v')
+	#coherence_lda = coherence_model_lda.get_coherence()
+	#print coherence_lda
+
