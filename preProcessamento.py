@@ -119,6 +119,21 @@ def saida(info):
 		
 	arq_saida.close()
 
+def removeLenWord(info, limiar): ### retira palavras com tamanho menor que uma limiar
+	
+	i=0
+	while(i<len(info)):
+		j=0
+		while(j<len(info[i])):
+
+			if len(info[i][j])<=limiar:
+
+				info[i].pop(j)
+				j=j-1
+			j=j+1
+		i=i+1
+	return info
+
 if __name__ == '__main__':
 	
 	info = leitura("reclameAqui.txt", 6)
@@ -138,6 +153,7 @@ if __name__ == '__main__':
 	info = removeWords(adjectives, info) ### retirando adjetivos
 	info = removeWords(stop, info) ### retirando stop words
 	info = removeNumbers(info)
+	info = removeLenWord(info, 3)
 
 
 	#for i in range(0, len(info)):

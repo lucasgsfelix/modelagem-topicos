@@ -62,7 +62,8 @@ if __name__ == '__main__':
                                            alpha='auto',
                                            per_word_topics=True)
 
-	topicos = ldamodel.print_topics(num_topics=10, num_words=4)
+	topicos = ldamodel.top_topics(corpus=doc_term_matrix, dictionary=dictionary, coherence='u_mass', topn=5, processes=-1)
+	print topicos
 	#t = returnTopics(topicos)
 	#doc_lda = ldamodel[doc_term_matrix]
 	# Perplexity é uma medida de quão bom o modelo é, quanto menor melhor
